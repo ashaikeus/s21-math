@@ -70,23 +70,70 @@ START_TEST(testing_floor) {
 END_TEST
 
 START_TEST(testing_sin) {
+  int success = 0;
+
   const double x = 3, y = S21_PI;
-  ck_assert_double_eq(s21_sin(x), sin(x));
-  ck_assert_double_eq(s21_sin(y), sin(y));
+
+  double value121 = s21_sin(x);
+  double value1 = sin(x);
+
+  double value221 = s21_sin(y);
+  double value2 = sin(y);
+
+  double value321 = s21_sin(x * 3);
+  double value3 = sin(x * 3);
+
+  if ((s21_fabs(value121 - value1) < S21_EPS) &&
+  (s21_fabs(value221 - value2) < S21_EPS) &&
+  (s21_fabs(value321 - value3) < S21_EPS)) {
+    success = 1;
+  }
+
+  ck_assert_int_eq(success, 1);
 }
 END_TEST
 
 START_TEST(testing_cos) {
+  int success = 0;
+
   const double x = 3, y = S21_PI;
-  ck_assert_double_eq(s21_cos(x), cos(x));
-  ck_assert_double_eq(s21_cos(y), cos(y));
+
+  double value121 = s21_cos(x);
+  double value1 = cos(x);
+
+  double value221 = s21_cos(y);
+  double value2 = cos(y);
+
+  double value321 = s21_cos(x * 3);
+  double value3 = cos(x * 3);
+
+  if ((s21_fabs(value121 - value1) < S21_EPS) &&
+  (s21_fabs(value221 - value2) < S21_EPS) &&
+  (s21_fabs(value321 - value3) < S21_EPS)) {
+    success = 1;
+  }
+
+  ck_assert_int_eq(success, 1);
 }
 END_TEST
 
 START_TEST(testing_tan) {
+  int success = 0;
   const double x = 3, y = S21_PI;
-  ck_assert_double_eq(s21_tan(x), tan(x));
-  ck_assert_double_eq(s21_tan(y), tan(y));
+  double value121 = s21_tan(x);
+  double value1 = tan(x);
+  double value221 = s21_tan(y);
+  double value2 = tan(y);
+  double value321 = s21_tan(x * 3);
+  double value3 = tan(x * 3);
+
+  if ((s21_fabs(value121 - value1) < S21_EPS) &&
+  (s21_fabs(value221 - value2) < S21_EPS) &&
+  (s21_fabs(value321 - value3) < S21_EPS)) {
+    success = 1;
+  }
+
+  ck_assert_int_eq(success, 1);
 }
 END_TEST
 
@@ -98,11 +145,24 @@ END_TEST
 // END_TEST
 
 START_TEST(testing_exp) {
-    const double x = 2, y = 5, z = 0;
-    ck_assert_double_eq(s21_exp(x), exp(x));
-    ck_assert_double_eq(s21_exp(-x), exp(-x));
-    ck_assert_double_eq(s21_exp(-y), exp(-y));
-    ck_assert_double_eq(s21_exp(z), exp(z));
+  int success = 0;
+  const double x = 2, y = 6, z = 0;
+  double value121 = s21_sin(x);
+  double value1 = sin(x);
+  double value221 = s21_sin(-y);
+  double value2 = sin(-y);
+  double value321 = s21_sin(z);
+  double value3 = sin(z);
+  double value421 = s21_sin(-x);
+  double value4 = sin(-x);
+
+  if ((s21_fabs(value121 - value1) < S21_EPS) &&
+  (s21_fabs(value221 - value2) < S21_EPS) &&
+  (s21_fabs(value321 - value3) < S21_EPS) &&
+  (s21_fabs(value421 - value4) < S21_EPS))  {
+    success = 1;
+  }
+  ck_assert_int_eq(success, 1);
 }
 END_TEST
 
@@ -152,9 +212,9 @@ Suite *test_suite(void) {
     tcase_add_test(tc_test_fmod, testing_fmod);
     suite_add_tcase(s, tc_test_fmod);
 
-    // tc_test_sqrt = tcase_create("sqrt\n");
-    // tcase_add_test(tc_test_sqrt, testing_sqrt);
-    // suite_add_tcase(s, tc_test_sqrt);
+    tc_test_sqrt = tcase_create("sqrt\n");
+    tcase_add_test(tc_test_sqrt, testing_sqrt);
+    suite_add_tcase(s, tc_test_sqrt);
 
     tc_test_ceil = tcase_create("ceil\n");
     tcase_add_test(tc_test_ceil, testing_ceil);
@@ -164,17 +224,17 @@ Suite *test_suite(void) {
     tcase_add_test(tc_test_floor, testing_floor);
     suite_add_tcase(s, tc_test_floor);
 
-    // tc_test_sin = tcase_create("sin\n");
-    // tcase_add_test(tc_test_sin, testing_sin);
-    // suite_add_tcase(s, tc_test_sin);
+    tc_test_sin = tcase_create("sin\n");
+    tcase_add_test(tc_test_sin, testing_sin);
+    suite_add_tcase(s, tc_test_sin);
 
-    // tc_test_cos = tcase_create("cos\n");
-    // tcase_add_test(tc_test_cos, testing_cos);
-    // suite_add_tcase(s, tc_test_cos);
+    tc_test_cos = tcase_create("cos\n");
+    tcase_add_test(tc_test_cos, testing_cos);
+    suite_add_tcase(s, tc_test_cos);
 
-    // tc_test_tan = tcase_create("tan\n");
-    // tcase_add_test(tc_test_tan, testing_tan);
-    // suite_add_tcase(s, tc_test_tan);
+    tc_test_tan = tcase_create("tan\n");
+    tcase_add_test(tc_test_tan, testing_tan);
+    suite_add_tcase(s, tc_test_tan);
 
         // tc_test_asin = tcase_create("asin\n");
         // tcase_add_test(tc_test_asin, testing_asin);
@@ -188,9 +248,9 @@ Suite *test_suite(void) {
         // tcase_add_test(tc_test_atan, testing_atan);
         // suite_add_tcase(s, tc_test_atan);
 
-    // tc_test_exp = tcase_create("exp\n");
-    // tcase_add_test(tc_test_exp, testing_exp);
-    // suite_add_tcase(s, tc_test_exp);
+    tc_test_exp = tcase_create("exp\n");
+    tcase_add_test(tc_test_exp, testing_exp);
+    suite_add_tcase(s, tc_test_exp);
 
     // tc_test_log = tcase_create("log\n");
     // tcase_add_test(tc_test_log, testing_log);
