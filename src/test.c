@@ -12,36 +12,40 @@ END_TEST
 
 START_TEST(testing_fabs) {
     const double value = -29.5;
-    ck_assert_double_eq(s21_fabs(value), fabs(value));
-    ck_assert_double_eq(s21_fabs(s21_fabs(value)), fabs(fabs(value)));
+    ck_assert_ldouble_eq_tol(s21_fabs(value), fabs(value), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_fabs(s21_fabs(value)), fabs(fabs(value)), S21_EPS);
 }
 END_TEST
 
 START_TEST(testing_pow) {
     const double x = 2, y = 5, z = 0;
-    ck_assert_double_eq(s21_pow(x, y), pow(x, y));
-    ck_assert_double_eq(s21_pow(-x, y), pow(-x, y));
-    ck_assert_double_eq(s21_pow(-y, x), pow(-y, x));
-    ck_assert_double_eq(s21_pow(y, -x), pow(y, -x));
-    ck_assert_double_eq(s21_pow(z, y), pow(z, y));
-    ck_assert_double_eq(s21_pow(z, y), pow(z, y));
-    ck_assert_double_eq(s21_pow(z, -y), pow(z, -y));
+    ck_assert_ldouble_eq_tol(s21_pow(x, y), pow(x, y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(-x, y), pow(-x, y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(-y, x), pow(-y, x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(y, -x), pow(y, -x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(z, y), pow(z, y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(z, y), pow(z, y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(z, 0.5), pow(z, 0.5), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_pow(x, 0.5), pow(x, 0.5), S21_EPS);
+    ck_assert_ldouble_infinite(s21_pow(z, -y));
 }
 END_TEST
 
 START_TEST(testing_fmod) {
     const double x = 23.15, y = 5.124;
-    ck_assert_double_eq(s21_fmod(x, y), fmod(x, y));
-    ck_assert_double_eq(s21_fmod(-y, x), fmod(-y, x));
+    ck_assert_ldouble_eq_tol(s21_fmod(x, y), fmod(x, y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_fmod(y, x), fmod(y, x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_fmod(x, -y), fmod(x, -y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_fmod(-y, -x), fmod(-y, -x), S21_EPS);
 }
 END_TEST
 
 START_TEST(testing_sqrt) {
     const double x = 23;
     const double y = 1600;
-    ck_assert_double_eq(s21_sqrt(x), sqrt(x));
-    ck_assert_double_eq(s21_sqrt(y), sqrt(y));
-    ck_assert_double_eq(s21_sqrt(-y), sqrt(-y));
+    ck_assert_ldouble_eq_tol(s21_sqrt(x), sqrt(x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_sqrt(y), sqrt(y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_sqrt(-y), sqrt(-y), S21_EPS);
 }
 END_TEST
 
@@ -49,12 +53,12 @@ START_TEST(testing_ceil) {
     const double x = 3.6;
     const double y = 3.2;
     const double z = 4.0;
-    ck_assert_double_eq(s21_ceil(x), ceil(x));
-    ck_assert_double_eq(s21_ceil(y), ceil(y));
-    ck_assert_double_eq(s21_ceil(z), ceil(z));
-    ck_assert_double_eq(s21_ceil(-x), ceil(-x));
-    ck_assert_double_eq(s21_ceil(-y), ceil(-y));
-    ck_assert_double_eq(s21_ceil(-z), ceil(-z));
+    ck_assert_ldouble_eq_tol(s21_ceil(x), ceil(x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_ceil(y), ceil(y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_ceil(z), ceil(z), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_ceil(-x), ceil(-x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_ceil(-y), ceil(-y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_ceil(-z), ceil(-z), S21_EPS);
 }
 END_TEST
 
@@ -62,78 +66,40 @@ START_TEST(testing_floor) {
     const double x = 3.6;
     const double y = 3.2;
     const double z = 4.0;
-    ck_assert_double_eq(s21_floor(x), floor(x));
-    ck_assert_double_eq(s21_floor(y), floor(y));
-    ck_assert_double_eq(s21_floor(-y), floor(-y));
-    ck_assert_double_eq(s21_floor(z), floor(z));
+    ck_assert_ldouble_eq_tol(s21_floor(x), floor(x), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_floor(y), floor(y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_floor(-y), floor(-y), S21_EPS);
+    ck_assert_ldouble_eq_tol(s21_floor(z), floor(z), S21_EPS);
 }
 END_TEST
 
 START_TEST(testing_sin) {
-  int success = 0;
-
   const double x = 3, y = S21_PI;
 
-  double value121 = s21_sin(x);
-  double value1 = sin(x);
-
-  double value221 = s21_sin(y);
-  double value2 = sin(y);
-
-  double value321 = s21_sin(x * 3);
-  double value3 = sin(x * 3);
-
-  if ((s21_fabs(value121 - value1) < S21_EPS) &&
-  (s21_fabs(value221 - value2) < S21_EPS) &&
-  (s21_fabs(value321 - value3) < S21_EPS)) {
-    success = 1;
-  }
-
-  ck_assert_int_eq(success, 1);
+  ck_assert_ldouble_eq_tol(s21_sin(x), sin(x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_sin(y), sin(y), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_sin(-x), sin(-x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_sin(x * 3), sin(x * 3), S21_EPS);
 }
 END_TEST
 
 START_TEST(testing_cos) {
-  int success = 0;
-
   const double x = 3, y = S21_PI;
 
-  double value121 = s21_cos(x);
-  double value1 = cos(x);
-
-  double value221 = s21_cos(y);
-  double value2 = cos(y);
-
-  double value321 = s21_cos(x * 3);
-  double value3 = cos(x * 3);
-
-  if ((s21_fabs(value121 - value1) < S21_EPS) &&
-  (s21_fabs(value221 - value2) < S21_EPS) &&
-  (s21_fabs(value321 - value3) < S21_EPS)) {
-    success = 1;
-  }
-
-  ck_assert_int_eq(success, 1);
+  ck_assert_ldouble_eq_tol(s21_cos(x), cos(x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_cos(y), cos(y), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_cos(-x), cos(-x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_cos(x * 3), cos(x * 3), S21_EPS);
 }
 END_TEST
 
 START_TEST(testing_tan) {
-  int success = 0;
   const double x = 3, y = S21_PI;
-  double value121 = s21_tan(x);
-  double value1 = tan(x);
-  double value221 = s21_tan(y);
-  double value2 = tan(y);
-  double value321 = s21_tan(x * 3);
-  double value3 = tan(x * 3);
 
-  if ((s21_fabs(value121 - value1) < S21_EPS) &&
-  (s21_fabs(value221 - value2) < S21_EPS) &&
-  (s21_fabs(value321 - value3) < S21_EPS)) {
-    success = 1;
-  }
-
-  ck_assert_int_eq(success, 1);
+  ck_assert_ldouble_eq_tol(s21_tan(x), tan(x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_tan(y), tan(y), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_tan(-x), tan(-x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_tan(x * 3), tan(x * 3), S21_EPS);
 }
 END_TEST
 
@@ -147,22 +113,11 @@ END_TEST
 START_TEST(testing_exp) {
   int success = 0;
   const double x = 2, y = 6, z = 0;
-  double value121 = s21_sin(x);
-  double value1 = sin(x);
-  double value221 = s21_sin(-y);
-  double value2 = sin(-y);
-  double value321 = s21_sin(z);
-  double value3 = sin(z);
-  double value421 = s21_sin(-x);
-  double value4 = sin(-x);
 
-  if ((s21_fabs(value121 - value1) < S21_EPS) &&
-  (s21_fabs(value221 - value2) < S21_EPS) &&
-  (s21_fabs(value321 - value3) < S21_EPS) &&
-  (s21_fabs(value421 - value4) < S21_EPS))  {
-    success = 1;
-  }
-  ck_assert_int_eq(success, 1);
+  ck_assert_ldouble_eq_tol(s21_exp(x), exp(x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_exp(y), exp(y), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_exp(-x), exp(-x), S21_EPS);
+  ck_assert_ldouble_eq_tol(s21_exp(x * 3), exp(x * 3), S21_EPS);
 }
 END_TEST
 
@@ -252,9 +207,9 @@ Suite *test_suite(void) {
     tcase_add_test(tc_test_exp, testing_exp);
     suite_add_tcase(s, tc_test_exp);
 
-    // tc_test_log = tcase_create("log\n");
-    // tcase_add_test(tc_test_log, testing_log);
-    // suite_add_tcase(s, tc_test_log);
+    tc_test_log = tcase_create("log\n");
+    tcase_add_test(tc_test_log, testing_log);
+    suite_add_tcase(s, tc_test_log);
 
     return s;
 }
