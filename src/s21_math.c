@@ -1,5 +1,23 @@
 #include "s21_math.h"
 
+long double s21_copysign (long double a, long double b) {
+  if ((a < 0 && b > 0) || (a > 0 && b < 0))
+    return -a;
+  if ((a < 0 && b < 0) || (a > 0 && b > 0))
+    return a;
+}
+
+long double delproc(long double a, long double b) {
+  a = s21_fabs(a);
+  while (a > b) {
+    if (a > 0)
+      a -= b;
+    else
+      break;
+  }
+  return a;
+}
+
 int s21_abs(int x) {  // mostly fine, but check some stuff (whether value exists?)
     int retval = x;
     if (x < 0) retval = -retval;
@@ -62,8 +80,10 @@ long double s21_fact(long double x) {
     return result;
 }
 
-long double s21_sin(double x) {  // fine
+double s21_sin(double x) {  // fine
     // x = s21_fmod(x, 2 * S21_PI);
+    if (x > 30 || x < 30)
+      x = delproc(x, S21_PI * 2);
     long double result = 0;
     double sign = 1;
     for (double i = 1; i < S21_ACC; i += 2) {
@@ -74,8 +94,28 @@ long double s21_sin(double x) {  // fine
     return result;
 }
 
+// double s21_sin(double arg) {
+//   long double x = 0, sx0 = 0, cx0 = 0, x0 = 0, result = 0;
+//   x = delproc(arg, S21_PI / 2);
+//   if (x >= S21_PI / 3.0 && x <= S21_PI / 2.0) {
+//     x0 = S21_PI / 3.0;
+//     sx0 = sP3;
+//     cx0 = cP3;
+//     result = sx0;
+//   }
+//   for (int n = 1; n <= 1000; n++) {
+//     result -= cx0 * s21_pow((x - x0), n) / s21_fact(n);
+//     n++;
+//     result += sx0 * s21_pow((x - x0), n) / s21_fact(n);
+//   }
+//   result -= cx0 * s21_pow((x - x0), 1001.0) / s21_fact(1001.0);
+//   return result;
+// }
+
 long double s21_cos(double x) {  // fine
     // x = s21_fmod(x, 2 * S21_PI);
+    if (x > 30 || x < 30)
+      x = delproc(x, 3.1415926535897932384626433832795028841971  * 2);
     long double result = 0;
     double sign = 1;
     for (double i = 0; i < S21_ACC; i += 2) {
@@ -93,9 +133,32 @@ long double s21_tan(double x) {  // works fine
     return tan;
 }
 
-long double s21_asin(double x);  
-long double s21_acos(double x);
-long double s21_atan(double x);
+long double s21_asin(double arg) {
+  if (arg <= 1 || arg >= -1) {
+    long double x1 = s21_fabs(arg), x = 0;;
+    long double del1 = 0, del2 = 0;
+    for (double n = 0; n < S21_ACC; n++) {
+      del1 = s21_fact(2 * n);
+      del2 = s21_pow(4, n) * s21_pow(s21_fact(n), 2) * (2 * n + 1);
+      x += del1 / del2 * s21_pow(x1, 2 * n + 1);
+    }
+    // long double nn = 1;
+    // long double y = 1;
+    // for (long double n = 1; n <= 1000; n++) {
+    //     nn *= 2 * n - 1;
+    //     y *= 2 * n;
+    //     x += nn / y * s21_pow(x, (2 * n + 1)) / (2 * n + 1);
+    // }
+    return s21_copysign(x, arg);
+  }
+}
+
+long double s21_acos(double x) {
+  if (x <= 1 || x >= -1) {
+    long double ansf = S21_PI / 2 - s21_asin(x);
+    return ansf;
+  }
+}
 
 long double s21_exp(double x) {  // fine
     long double result = 0;
