@@ -61,9 +61,9 @@ long double s21_fmod(double x, double y) {  // looks fine
     return x;
 }
 
-long double s21_sqrt(double x) {  // no no wrong wrong
-    // return s21_pow(x, 0.5);
-}
+// long double s21_sqrt(double x) {  // no no wrong wrong
+//     return s21_pow(x, 0.5);
+// }
 
 long double s21_ceil(double x) {  // fine as h*ck
     int retval = (int)x;
@@ -83,7 +83,7 @@ long double s21_fact(long double x) {
     return result;
 }
 
-double s21_sin(double x) {  // fine
+long double s21_sin(double x) {  // fine
     // x = s21_fmod(x, 2 * S21_PI);
     if (x > 30 || x < 30)
       x = delproc(x, S21_PI * 2);
@@ -157,14 +157,16 @@ long double s21_asin(double arg) {
     //     x += nn / y * s21_pow(x, (2 * n + 1)) / (2 * n + 1);
     // }
     return s21_copysign(x, arg);
-  }
+  } else
+    return nan("nan");
 }
 
 long double s21_acos(double x) {
   if (x <= 1 || x >= -1) {
     long double ansf = S21_PI / 2 - s21_asin(x);
     return ansf;
-  }
+  } else
+    return nan("nan");
 }
 
 long double s21_exp(double x) {  // fine
