@@ -4,6 +4,11 @@
 #define S21_PI 3.14159265358979323846
 #define S21_E 2.71828182845904523536
 #define S21_EPS 1e-6
+#define S21_INF 1.0 / 0.0
+#define S21_MINF -1.0 / 0.0
+#define S21_NAN 0.0 / 0.0
+// #define S21_MNAN -0.0 / 0.0
+
 #define S21_ACC 444
 // #define S21_NULL ((void*)0)
 
