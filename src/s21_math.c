@@ -1,5 +1,4 @@
 #include "s21_math.h"
-#include <math.h>
 
 
 // const long double POS = 3;  // 2
@@ -32,15 +31,15 @@ long double s21_fabs(double x) {  // +/+
 
 long double s21_pow(double base, double exp) {  // -/-!!!!
     long double result = 1;
-    // if (base == 0 && exp > 0) result = 0;
-    // else if (exp == 0) result = 1;
-    // result = s21_exp(exp * s21_log(base));
+    if (base == 0 && exp > 0) result = 0;
+    else if (exp == 0) result = 1;
+    result = s21_exp(exp * s21_log(base));
     // else if (exp > 0) for (double i = 0; i < exp; i++) result *= base;
     // else for (double i = 0; i < s21_abs(exp); i++) result /= base;
     
-    if (exp == 1) return base;
-    if (s21_fmod(exp, 2) == 1) return base * s21_pow(base, exp - 1);
-    result = s21_pow(base, exp / 2);
+    // else if (exp == 1) return base;
+    // if (s21_fmod(exp, 2) == 1) return base * s21_pow(base, exp - 1);
+    // result = s21_pow(base, exp / 2);
     return result;
 }
 
@@ -140,15 +139,12 @@ long double s21_log(double x) { // -/+
     if (x != x || x < 0) return S21_NAN;
     else if (x == 0) return S21_MINF;
     long double result = 0;
-    int sign = 1;
     if (x != 1) {
-        x -= 1;
-        for (double i = 0; i < S21_ACC; i += 1) {
-            result += sign * s21_pow(x, i) / s21_fact(i);
-            sign = -sign;
+        for (double i = 1; i < S21_ACC; i += 2) {
+            result += (1 / x) * s21_pow((x - 1) / (x + 1), i);
         }
     }
-    return result;
+    return 2 * result;
 }
 
 // int main() {
