@@ -180,6 +180,7 @@ long double s21_atan(double x) {
   else res = arg;
   for (int i = 1; i < S21_ACC; i++) {
     res -= s21_pow(arg, (1 + 2 * i) * (arg < 1 ? 1 : -1)) / (1 + 2 * i);
+    i++;
     res += s21_pow(arg, (1 + 2 * i) * (arg < 1 ? 1 : -1)) / (1 + 2 * i);
   }
   if(arg > 1.0) res = (S21_PI * arg / (2 * arg)) - res;
@@ -206,5 +207,5 @@ long double s21_log(double x) {
 }
 
 // int main() {
-//     printf("%Lf vs %lf\n", s21_atan(1554), atan(1554));
+//     printf("%Lf vs %lf\n", s21_atan(0.1554), atan(0.1554));
 // }
