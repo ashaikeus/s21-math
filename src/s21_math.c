@@ -158,7 +158,7 @@ long double s21_asin(double arg) {
     // }
     return s21_copysign(x, arg);
   } else
-    return nan("nan");
+    return S21_NAN;
 }
 
 long double s21_acos(double x) {
@@ -166,7 +166,24 @@ long double s21_acos(double x) {
     long double ansf = S21_PI / 2 - s21_asin(x);
     return ansf;
   } else
-    return nan("nan");
+    return S21_NAN;
+}
+
+long double s21_atan(double x) {
+  long double res = 0, arg = s21_fabs(x);
+  if (x == S21_INF_P) return S21_PI / 2;
+  if (x == S21_INF_M) return -S21_PI / 2;
+  if (x != x) return x;
+  if (x == 1) return 0.785398163;
+  if (x == -1) return -0.785398163;
+  if (arg > 1.0) res = 1.0 / arg;
+  else res = arg;
+  for (int i = 1; i < S21_ACC; i++) {
+    res -= s21_pow(arg, (1 + 2 * i) * (arg < 1 ? 1 : -1)) / (1 + 2 * i);
+    res += s21_pow(arg, (1 + 2 * i) * (arg < 1 ? 1 : -1)) / (1 + 2 * i);
+  }
+  if(arg > 1.0) res = (S21_PI * arg / (2 * arg)) - res;
+  return s21_copysign(res, x);
 }
 
 long double s21_exp(double x) {  // fine
@@ -189,5 +206,5 @@ long double s21_log(double x) {
 }
 
 // int main() {
-//     printf("%Lf vs %lf\n", s21_fmod(23.15, 5.124), fmod(23.15, 5.124));
+//     printf("%Lf vs %lf\n", s21_atan(1554), atan(1554));
 // }
