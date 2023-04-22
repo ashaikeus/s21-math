@@ -5,7 +5,7 @@
 #define S21_E 2.71828182845904523536
 #define S21_EPS 1e-6
 #define S21_INF 1.0 / 0.0
-#define S21_MINF -1.0 / 0.0
+#define S21_INF_M -1.0 / 0.0
 #define S21_NAN 0.0 / 0.0
 // #define S21_MNAN -0.0 / 0.0
 
@@ -24,15 +24,18 @@ long double s21_sqrt(double x);  // -
 long double s21_ceil(double x);  // +
 long double s21_floor(double x);  // +
 
-long double s21_sin(double x);  // +
-long double s21_cos(double x);  // +
-long double s21_tan(double x);  // +
+long double s21_sin(double x);  // +-
+long double s21_cos(double x);  // +-
+long double s21_tan(double x);  // +-
 
-long double s21_asin(double x);
-long double s21_acos(double x);
-long double s21_atan(double x);
+long double s21_asin(double x);  // +
+long double s21_acos(double x);  // +
+long double s21_atan(double x);  // +
 
 long double s21_exp(double x);  // +
 long double s21_log(double x);  // -
+
+long double s21_fact(long double x);
+long double s21_copysign (long double a, long double b);
 
 #endif

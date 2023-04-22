@@ -122,9 +122,9 @@ long double s21_tan(double x) {  // ~
     return tan;
 }
 
-long double s21_asin(double x);  
-long double s21_acos(double x);
-long double s21_atan(double x);
+// long double s21_asin(double x);  
+// long double s21_acos(double x);
+// long double s21_atan(double x);
 
 long double s21_exp(double x) {  // +/+
     if (x != x) return S21_NAN;
@@ -137,7 +137,7 @@ long double s21_exp(double x) {  // +/+
 
 long double s21_log(double x) { // -/+
     if (x != x || x < 0) return S21_NAN;
-    else if (x == 0) return S21_MINF;
+    else if (x == 0) return S21_INF_M;
     long double result = 0;
     if (x != 1) {
         for (double i = 1; i < S21_ACC; i += 2) {
@@ -146,6 +146,16 @@ long double s21_log(double x) { // -/+
     }
     return 2 * result;
 }
+
+long double s21_copysign (long double a, long double b) {
+  if ((a < 0 && b > 0) || (a > 0 && b < 0))
+    return -a;
+  if ((a < 0 && b < 0) || (a > 0 && b > 0))
+    return a;
+  else
+    return 0;
+}
+
 
 // int main() {
 //     for (int i = 0; i < valcount; i++) {
