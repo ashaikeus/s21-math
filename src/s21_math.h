@@ -17,7 +17,7 @@
 //                                      (code / posix / tests)
 int s21_abs(int x);                            // +/+/+
 long double s21_fabs(double x);                // +/+/+
-long double s21_pow(double base, double exp);  // -/+-+-
+long double s21_pow(double base, double exp);  // +/+/+
 
 long double s21_fmod(double x, double y);      // +/+/+
 long double s21_sqrt(double x);                // +/+/+

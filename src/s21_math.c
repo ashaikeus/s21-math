@@ -16,7 +16,7 @@ long double s21_fabs(double x) {
     return retval;
 }
 
-long double s21_pow(double base, double exp) {  // -/-!!!!
+long double s21_pow(double base, double exp) {
     if ((base == 1) || (exp == 0)) return 1.0;
     if ((base != base) || (exp != exp)) return S21_NAN;
     if (base == 0 && exp < 0) return S21_INF;
@@ -26,38 +26,15 @@ long double s21_pow(double base, double exp) {  // -/-!!!!
     if ((base == S21_INF_M) || (exp == S21_INF_M)) return S21_INF;
     if (exp == 1) return base;
 
-    int base_sign = (base < 0) ? -1 : 1;
-    int always_positive_by_even_exp = s21_fmod(exp, 2) ? 0 : 1;
-
-    // long double result = 1 / s21_log(s21_log(base) * exp);
-    // long double result = s21_mul_by(S21_E, exp * s21_log(base));
-    long double result = 0.0;
-    // long double fraction = s21_fmod(exp, 1);
-    // for (int i = 0.0; i < s21_fabs(exp) - !!fraction; i++) result *= base;
-    // if (!!fraction) {
-        result += s21_exp(exp * s21_log(base));
-    // }
-    if (exp < 0) result = 1.0 / result;
+    long double result = s21_exp(exp * s21_log(s21_fabs(base)));
+    if (base < 0) result *= -1.0;
 
     return result;
-
-    // long double result = 1;
-    // if (base == 0 && exp > 0) result = 0;
-    // else if (exp == 0) result = 1;
-    // result = s21_exp(exp * s21_log(base));
-    // // else if (exp > 0) for (double i = 0; i < exp; i++) result *= base;
-    // // else for (double i = 0; i < s21_abs(exp); i++) result /= base;
-    
-    // // else if (exp == 1) return base;
-    // // if (s21_fmod(exp, 2) == 1) return base * s21_pow(base, exp - 1);
-    // // result = s21_pow(base, exp / 2);
-    // return result;
 }
 
 long double s21_fmod(double x, double y) {
     if ((x != x) || (y != y) || (y == 0) || (x * 0 != 0)) return S21_NAN;
     int minx = 0, miny = 0;
-    // if (y == 0) return S21_NULL;
     if (x < 0) {
         minx = 1;
         x = s21_fabs(x);
