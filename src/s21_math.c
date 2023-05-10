@@ -17,23 +17,48 @@ long double s21_fabs(double x) {
 }
 
 long double s21_pow(double base, double exp) {
+    // (fin)base<0 && (fin)exp%1!=0  =>  S21_NAN
+    if ((base * 0 == 0) && (base < 0) && (exp * 0 == 0) && (s21_fmod(s21_fabs(exp), 1.0) > S21_EPS)) return S21_NAN;
+    // base=1  =>  1
+    // exp=0  =>  1
     if ((base == 1) || (exp == 0)) return 1.0;
+    // base!=base || exp!=exp  =>  S21_NAN
     if ((base != base) || (exp != exp)) return S21_NAN;
-    if (base == 0 && exp < 0) return S21_INF;
-    if (base == 0 && exp != S21_INF_M) return 0;  // odd = -0?
+    // base=0 && exp>0 && !(exp%1==0 && exp%2!=0)  =>  0
+    if ((base == 0) && (exp > 0) && !((s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS))) return 0;
+    // base=-1 && exp*0!=0  =>  1
     if ((base == -1) && (exp * 0 != 0)) return 1.0;
-    if ((base * 0 != 0) || (exp * 0 != 0)) return S21_INF;
-    if ((base == S21_INF_M) || (exp == S21_INF_M)) return S21_INF;
-    if (exp == 1) return base;
+    // s21_fabs(base)<1 && exp*0!=0 && exp<0  => S21_INF
+    if ((s21_fabs(base) < 1) && (exp * 0 != 0) && (exp < 0)) return S21_INF;
+    // s21_fabs(base)>1 && exp*0!=0 && exp<0  => 0
+    if ((s21_fabs(base) > 1) && (exp * 0 != 0) && (exp < 0)) return 0;
+    // s21_fabs(base)<1 && exp*0!=0 && exp>0  => 0
+    if ((s21_fabs(base) < 1) && (exp * 0 != 0) && (exp > 0)) return 0;
+    // s21_fabs(base)>1 && exp*0!=0 && exp>0  => S21_INF
+    if ((s21_fabs(base) > 1) && (exp * 0 != 0) && (exp > 0)) return S21_INF;
+    // base*0!=0 && base<0 && exp%2 && exp%1==0 && exp<0  =>  -0
+    if ((base * 0 != 0) && (base < 0) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (exp < 0)) return -0;
+    // base*0!=0 && base<0 && !(exp%2 && exp%1==0) && exp<0  =>  +0
+    if ((base * 0 != 0) && (base < 0) && !((s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS)) && (exp < 0)) return +0;
+    // base*0!=0 && base<0 && exp%2 && exp%1==0 && exp>0  =>  S21_INF_M
+    if ((base * 0 != 0) && (base < 0) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (exp > 0)) return S21_INF_M;    
+    // base*0!=0 && base<0 && !(exp%2 && exp%1==0) && exp>0  =>  S21_INF
+    if ((base * 0 != 0) && (base < 0) && !((s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS)) && (exp > 0)) return S21_INF;
+    // base*0!=0 && base>0 && exp<0  =>  +0
+    if ((base * 0 != 0) && (base > 0) && (exp < 0)) return +0;
+    // base*0!=0 && base>0 && exp>0  =>  S21_INF
+    if ((base * 0 != 0) && (base > 0) && (exp > 0)) return S21_INF;
+    
 
     long double result = s21_exp(exp * s21_log(s21_fabs(base)));
-    if (base < 0) result *= -1.0;
+    if (base < 0 && (s21_fmod(exp, 2) > 0)) result *= -1.0;
 
     return result;
 }
 
 long double s21_fmod(double x, double y) {
     if ((x != x) || (y != y) || (y == 0) || (x * 0 != 0)) return S21_NAN;
+
     int minx = 0, miny = 0;
     if (x < 0) {
         minx = 1;
@@ -52,6 +77,7 @@ long double s21_fmod(double x, double y) {
 long double s21_sqrt(double x) {
     if ((x != x) || (x < 0)) return S21_NAN;
     else if ((x * 0 != 0) || (x == 0)) return x;
+
     double original = x;
     long double res = (long double)x;
     while (1) {
@@ -79,31 +105,33 @@ long double s21_floor(double x) {
 }
 
 long double s21_sin(double x) {
-    // x = s21_fmod(x, 2 * S21_PI);
     if (x != x) return S21_NAN;
     if (x * 0 != 0) return S21_NAN;
     if (x == 0) return 0;
+
+    int negate_result = x < 0;
+    x = s21_fmod(x, 2 * S21_PI);
     long double result = 0;
     double sign = 1;
     for (double i = 1; i < S21_ACC; i += 2) {
-        result += sign * s21_pow(x, i) / s21_fact(i);
+        result += sign * s21_mul_by(x, i) / s21_fact(i);
         sign = -sign;
-        // result += s21_pow(-1, i - 1) * (s21_pow(x, i) / (s21_fact(i)));
     }
+    if (negate_result) result = -result;
     return result;
 }
 
 long double s21_cos(double x) {
-    // x = s21_fmod(x, 2 * S21_PI);
     if (x != x) return S21_NAN;
     if (x * 0 != 0) return S21_NAN;
     if (x == 0) return 1;
+
+    x = s21_fmod(x, 2 * S21_PI);
     long double result = 0;
     double sign = 1;
     for (double i = 0; i < S21_ACC; i += 2) {
-        result += sign * s21_pow(x, i) / s21_fact(i);
+        result += sign * s21_mul_by(x, i) / s21_fact(i);
         sign = -sign;
-        // result += s21_pow(-1, i - 1) * (s21_pow(x, i) / (s21_fact(i)));
     }
     return result;
 }
@@ -118,6 +146,7 @@ long double s21_exp(double x) {  // exp(x) = 1 + x + x^2/2! + x^3/3! + x^4/4! + 
     if ((x * 0 != 0) && (x > 0)) return x;
     if ((x * 0 != 0) && (x < 0)) return 0;
     if (x == 0) return 1;
+    if (x < 0) return 1 / s21_exp(-x);
 
     long double result = 0;
     for (double i = 0; i < S21_ACC; i += 1) {
@@ -132,13 +161,12 @@ long double s21_log(double x) {
     else if (x == 0) return S21_INF_M;
     else if (x == 1) return 0;
 
-    long double n = x - 1.0;
-    long double result = n;
-    do {
-        n = result;
-        result = n + 2 * (x - s21_exp(n)) / (x + s21_exp(n));
-    } while (s21_fabs(n - result) > S21_EPS);
-    return result;
+    int ex_pow = 0;
+    for (; x >= S21_E; x /= S21_E, ex_pow++) continue;
+
+    long double result = x - 1.0;
+    for (int i = 0; i < S21_ACC; i++) result = result + 2 * (x - s21_exp(result)) / (x + s21_exp(result));
+    return result + ex_pow;
 }
 
 //// ~ HELPERS ~ \\\\
