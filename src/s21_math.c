@@ -17,41 +17,26 @@ long double s21_fabs(double x) {
 }
 
 long double s21_pow(double base, double exp) {
-    // (fin)base<0 && (fin)exp%1!=0  =>  S21_NAN
-    if ((base * 0 == 0) && (base < 0) && (exp * 0 == 0) && (s21_fmod(s21_fabs(exp), 1.0) > S21_EPS)) return S21_NAN;
-    // base=1  =>  1
-    // exp=0  =>  1
+    if ((base * 0 == 0) && (base < 0) && (exp * 0 == 0) && (s21_floor(exp) != exp)) return S21_NAN;
     if ((base == 1) || (exp == 0)) return 1.0;
-    // base!=base || exp!=exp  =>  S21_NAN
     if ((base != base) || (exp != exp)) return S21_NAN;
-    // base=0 && exp>0 && !(exp%1==0 && exp%2!=0)  =>  0
     if ((base == 0) && (exp > 0) && !((s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS))) return 0;
-    // base=-1 && exp*0!=0  =>  1
     if ((base == -1) && (exp * 0 != 0)) return 1.0;
-    // s21_fabs(base)<1 && exp*0!=0 && exp<0  => S21_INF
     if ((s21_fabs(base) < 1) && (exp * 0 != 0) && (exp < 0)) return S21_INF;
-    // s21_fabs(base)>1 && exp*0!=0 && exp<0  => 0
     if ((s21_fabs(base) > 1) && (exp * 0 != 0) && (exp < 0)) return 0;
-    // s21_fabs(base)<1 && exp*0!=0 && exp>0  => 0
     if ((s21_fabs(base) < 1) && (exp * 0 != 0) && (exp > 0)) return 0;
-    // s21_fabs(base)>1 && exp*0!=0 && exp>0  => S21_INF
     if ((s21_fabs(base) > 1) && (exp * 0 != 0) && (exp > 0)) return S21_INF;
-    // base*0!=0 && base<0 && exp%2 && exp%1==0 && exp<0  =>  -0
     if ((base * 0 != 0) && (base < 0) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (exp < 0)) return -0;
-    // base*0!=0 && base<0 && !(exp%2 && exp%1==0) && exp<0  =>  +0
     if ((base * 0 != 0) && (base < 0) && !((s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS)) && (exp < 0)) return +0;
-    // base*0!=0 && base<0 && exp%2 && exp%1==0 && exp>0  =>  S21_INF_M
     if ((base * 0 != 0) && (base < 0) && (s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS) && (exp > 0)) return S21_INF_M;    
-    // base*0!=0 && base<0 && !(exp%2 && exp%1==0) && exp>0  =>  S21_INF
     if ((base * 0 != 0) && (base < 0) && !((s21_fmod(s21_fabs(exp), 2.0) > S21_EPS) && (s21_fmod(s21_fabs(exp), 1.0) < S21_EPS)) && (exp > 0)) return S21_INF;
-    // base*0!=0 && base>0 && exp<0  =>  +0
     if ((base * 0 != 0) && (base > 0) && (exp < 0)) return +0;
-    // base*0!=0 && base>0 && exp>0  =>  S21_INF
     if ((base * 0 != 0) && (base > 0) && (exp > 0)) return S21_INF;
-    
+
+    if (exp < 0) return 1 / s21_pow(base, -exp);
 
     long double result = s21_exp(exp * s21_log(s21_fabs(base)));
-    if (base < 0 && (s21_fmod(exp, 2) > 0)) result *= -1.0;
+    if ((base < 0) && (s21_fmod(exp, 2.0) == 1)) result *= -1.0;
 
     return result;
 }
@@ -191,3 +176,10 @@ long double s21_copysign(long double a, long double b) {
   else
     return 0;
 }
+
+// int main() {
+//     printf("%Lf\n", s21_pow(-3, 3));
+//     double a = (s21_fmod(s21_fabs(3), 1.0) > 0);
+//     printf("%Lf\n", a);
+//     printf("%d\n", a <= 1.0);
+// }

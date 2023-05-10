@@ -1,7 +1,6 @@
 #include "s21_math.h"
 
 long double s21_asin(double arg) {
-  if ((arg != arg) || (arg * 0 != 0)) return S21_NAN;
   if (s21_fabs(arg) == 1)
     return s21_copysign(1.570796, arg);
   if (arg <= 1 || arg >= -1) {
@@ -20,7 +19,6 @@ long double s21_asin(double arg) {
 }
 
 long double s21_acos(double x) {
-  if ((x != x) || (x * 0 != 0)) return S21_NAN;
   if (x <= 1 && x >= -1) {
     long double ansf = S21_PI / 2 - s21_asin(x);
     return ansf;
