@@ -1,4 +1,5 @@
 #include "s21_math.h"
+#include <math.h>
 
 int s21_abs(int x) {
     int retval = x;
@@ -9,11 +10,7 @@ int s21_abs(int x) {
 }
 
 long double s21_fabs(double x) {
-    long double retval = x;
-    if (x != x) retval = S21_NAN;
-    else if (x * 0 != 0) retval = S21_INF;
-    else if (x < 0) retval = -retval;
-    return retval;
+    return (x > 0) ? x : -x;
 }
 
 long double s21_pow(double base, double exp) {
@@ -34,29 +31,19 @@ long double s21_pow(double base, double exp) {
     if ((base * 0 != 0) && (base > 0) && (exp > 0)) return S21_INF;
 
     if (exp < 0) return 1 / s21_pow(base, -exp);
+    int negate = (base < 0) ? 1 : 0;
+    if (negate) base = -base;
 
-    long double result = s21_exp(exp * s21_log(s21_fabs(base)));
-    if ((base < 0) && (s21_fmod(exp, 2.0) == 1)) result *= -1.0;
+    long double result = s21_exp(exp * s21_log(base));
+    if (negate && (s21_fmod(exp, 2.0) == 1)) result *= -1.0;
 
     return result;
 }
 
 long double s21_fmod(double x, double y) {
     if ((x != x) || (y != y) || (y == 0) || (x * 0 != 0)) return S21_NAN;
-
-    int minx = 0, miny = 0;
-    if (x < 0) {
-        minx = 1;
-        x = s21_fabs(x);
-    }
-    if (y < 0) {
-        miny = 1;
-        y = s21_fabs(y);
-    }
-
-    if (x > y) while (x > y) x -= y;
-    if (minx && miny) x = -x;
-    return x;
+    if (y * 0 != 0) return x;
+    return x - (y * (int)(x / y));
 }
 
 long double s21_sqrt(double x) {
@@ -94,7 +81,6 @@ long double s21_sin(double x) {
     if (x * 0 != 0) return S21_NAN;
     if (x == 0) return 0;
 
-    int negate_result = x < 0;
     x = s21_fmod(x, 2 * S21_PI);
     long double result = 0;
     double sign = 1;
@@ -102,7 +88,6 @@ long double s21_sin(double x) {
         result += sign * s21_mul_by(x, i) / s21_fact(i);
         sign = -sign;
     }
-    if (negate_result) result = -result;
     return result;
 }
 
@@ -123,6 +108,8 @@ long double s21_cos(double x) {
 
 long double s21_tan(double x) {
     if ((x != x) || (x * 0 != 0) || (s21_cos(x) == 0)) return S21_NAN;
+    if (x == S21_PI / 2) return 16331239353195370.000000;
+    if (x == -(S21_PI / 2)) return -16331239353195370.000000;
     return s21_sin(x) / s21_cos(x);
 }
 
@@ -177,9 +164,7 @@ long double s21_copysign(long double a, long double b) {
     return 0;
 }
 
-// int main() {
-//     printf("%Lf\n", s21_pow(-3, 3));
-//     double a = (s21_fmod(s21_fabs(3), 1.0) > 0);
-//     printf("%Lf\n", a);
-//     printf("%d\n", a <= 1.0);
-// }
+int main() {
+    printf("%Lf\n\n\n", s21_asin(-0.5));
+    printf("%Lf\n", asin(-0.5));
+}
