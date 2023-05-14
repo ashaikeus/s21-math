@@ -176,10 +176,3 @@ long double s21_copysign(long double a, long double b) {
   else
     return 0;
 }
-
-// int main() {
-//     printf("%Lf\n", s21_pow(-3, 3));
-//     double a = (s21_fmod(s21_fabs(3), 1.0) > 0);
-//     printf("%Lf\n", a);
-//     printf("%d\n", a <= 1.0);
-// }
